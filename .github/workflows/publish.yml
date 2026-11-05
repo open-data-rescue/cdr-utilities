@@ -1,0 +1,58 @@
+---
+name: "Build package for public consumption"
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      logLevel:
+        description: 'Log level'
+        required: true
+        default: 'warning'
+        type: choice
+        options:
+        - info
+        - warning
+        - debug
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.14"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Set up Python ${{ matrix.python-version }}
+        run: uv python install ${{ matrix.python-version }}
+
+      - name: Build dist
+        run: uv build
+
+      - name: Store the distribution packages
+        uses: actions/upload-artifact@v5
+        with:
+          name: python-package-distributions
+          path: dist/
+
+  # deploy:
+  #   needs:
+  #     - build
+  #   runs-on: ubuntu-latest
+
+  #   steps:
+  #     - name: Deploy to repo
+  #       uses: actions/upload-artifact@v5
+
+      # uv publish
