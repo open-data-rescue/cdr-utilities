@@ -2,11 +2,8 @@
 name: "Build package for public consumption"
 
 on:
-  push:
-    branches:
-      - main
-    tags:
-      - 'v*'
+  release:
+    types: [published]
   workflow_dispatch:
     inputs:
       logLevel:
@@ -43,16 +40,30 @@ jobs:
       - name: Store the distribution packages
         uses: actions/upload-artifact@v5
         with:
-          name: python-package-distributions
+          name: release-dists
           path: dist/
 
-  # deploy:
-  #   needs:
-  #     - build
-  #   runs-on: ubuntu-latest
+  pypi-publish:
+    runs-on: ubuntu-latest
+    needs:
+      - build
+    permissions:
+      id-token: write
 
-  #   steps:
-  #     - name: Deploy to repo
-  #       uses: actions/upload-artifact@v5
+    environment:
+      name: pypi
+      url: https://pypi.org/p/cdr-utilities
 
-      # uv publish
+      # url: https://pypi.org/project/cdr-utilities/${{ github.event.release.name }}
+
+    steps:
+      - name: Retrieve release distributions
+        uses: actions/download-artifact@v4
+        with:
+          name: release-dists
+          path: dist/
+
+      - name: Publish release distributions to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          packages-dir: dist/          
