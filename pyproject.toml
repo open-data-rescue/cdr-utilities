@@ -1,6 +1,6 @@
 [project]
 name = "iso-mapping"
-version = "0.1.0"
+dynamic = ["version"]
 description = "Python functions to assist with climata data rescue projects"
 readme = "README.md"
 authors = [
@@ -17,9 +17,15 @@ license = "GPL-3.0-or-later"
 license-files = ["LICEN[CS]E*"]
 
 [build-system]
-requires = ["uv_build>=0.12.18,<0.13.0"]
-build-backend = "uv_build"
+requires = ["setuptools>=68", "setuptools-scm>=8"]
+build-backend = "setuptools.build_meta"
 
 [project.urls]
 Homepage = "https://github.com/open-data-rescue/iso-mapping"
 Issues = "https://github.com/open-data-rescue/iso-mapping/issues"
+
+[tool.setuptools_scm]
+fallback_version = "0.0.0"
+
+[tool.setuptools.packages.find]
+where = ["src"]
