@@ -52,9 +52,7 @@ jobs:
 
     environment:
       name: pypi
-      url: https://pypi.org/p/cdr-utilities
-
-      # url: https://pypi.org/project/cdr-utilities/${{ github.event.release.name }}
+      url: https://pypi.org/p/cdrutilities
 
     steps:
       - name: Retrieve release distributions

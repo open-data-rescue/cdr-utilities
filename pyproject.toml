@@ -1,5 +1,5 @@
 [project]
-name = "cdr-utilities"
+name = "CDRUtilities"
 dynamic = ["version"]
 description = "Python functions to assist with climata data rescue projects"
 readme = "README.md"
