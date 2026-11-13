@@ -19,14 +19,14 @@ We recommend that you use {uv} for you python project. You can then add
 the dependancy to these utilities via the command
 
 ```
-uv add cdr-utilities
+uv add cdrutilities
 ```
 
 and within your python code import the functionality via
 
 ```
-from cdr-utilities import iso_mapping
-from cdr-utilities import lmrlib
+from cdrutilities import iso_mapping
+from cdrutilities import lmrlib
 ```
 
 Access the functions via

@@ -12,7 +12,9 @@ classifiers = [
     "Programming Language :: Python :: 3",
     "Operating System :: OS Independent",
 ]
-dependencies = []
+dependencies = [
+    "numpy>=2.5.4",
+]
 license = "GPL-3.0-or-later"
 license-files = ["LICEN[CS]E*"]
 
