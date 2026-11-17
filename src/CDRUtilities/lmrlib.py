@@ -141,14 +141,14 @@ class lmrlib:
     #-----factor for conversion of French inches to mm (IMC, 1890, p. B.2);
     #     mm are then converted to mb via {baro_mm2mb}
     def baro_Fr_in2mb(fi):
-        baro_Fr_in2mb = baro_mm2mb(fi * 27.069953)
+        baro_Fr_in2mb = lmrlib.baro_mm2mb(fi * 27.069953)
         return baro_Fr_in2mb
 
     #=============================================================================
     #-----Convert barometric pressure in millibars (hPa; mb) to inches (French)
     #     of mercury.  Numerical inverse of {baro_Fr_in2mb} (see for background).
     def baro_mb2Fr_in(mb):
-        baro_mb2Fr_in = baro_mb2mm(mb) / 27.069953
+        baro_mb2Fr_in = lmrlib.baro_mb2mm(mb) / 27.069953
         return baro_mb2Fr_in
 
     #=============================================================================
@@ -332,7 +332,7 @@ class lmrlib:
     #     (Note: assumption: no known basis in documentation)
         t1 = 10 - t0
     #-----convert tenths of "sky covered" to oktas
-        cloud_tenthsclear2oktas = cloud_tenthscovered2oktas(t1)
+        cloud_tenthsclear2oktas = lmrlib.cloud_tenthscovered2oktas(t1)
         return cloud_tenthsclear2oktas
 
     #=======================================================================-------
@@ -547,7 +547,7 @@ class lmrlib:
         wind_4chardir2deg = imiss
         for j in range(1,32):
           if c32 == cwdList[j-1]:
-              wind_4chardir2deg = wind_dircode2deg(j,imiss)
+              wind_4chardir2deg = lmrlib.wind_dircode2deg(j,imiss)
               dc     = j
               return wind_4chardir2deg
         return wind_4chardir2deg
@@ -645,13 +645,13 @@ class lmrlib:
     def print_epsilon():
     #-----Print calculated machine epsilon, i.e., the smallest power of 2,
     #     2**no = ep, such that 1+2**no>1
-        print("print_epsilon output:",np.finfo(float32).eps)
+        print("print_epsilon output:",np.finfo(np.float32).eps)
         return
 
     #=============================================================================
     def print_dblepsilon():
     #-----Double precision version of {print_epsilon} (see for background).
-        print("print_dblepsilon output:",np.finfo(np.float).eps)
+        print("print_dblepsilon output:",np.finfo(float).eps)
         return
 
     #=============================================================================
