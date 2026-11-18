@@ -25,8 +25,8 @@ uv add cdrutilities
 and within your python code import the functionality via
 
 ```
-from cdrutilities import iso_mapping
-from cdrutilities import lmrlib
+from CDRUtilities import iso_mapping
+from CDRUtilities import lmrlib
 ```
 
 Access the functions via
@@ -48,7 +48,7 @@ twine
 Initialize the project with
 
 ```
-uv synv
+uv sync
 ```
 
 and build locally with
