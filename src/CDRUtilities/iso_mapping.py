@@ -3,16 +3,17 @@
 class iso_mapping:
     def convertUpperCloud(cloud: str):
         value = cloud.lower()
-        if "cumulo" in value and "nimbus" in value:
+        # cirrus-type clouds are high clouds, whichever column they are written in
+        if "cirr" in value and "cumul" in value:
+            return "Ch9"                     # cirrocumulus
+        elif "cirr" in value and "strat" in value:
+            return "Ch8"                     # cirrostratus
+        elif "cirr" in value:
+            return "Ch6"                     # cirrus
+        elif "cumulo" in value and "nimbus" in value:
             return "Cl9"
         elif "cumulo" in value and "stratus" in value:
             return "Cm7"
-        elif "cirr" in value and "cumul" in value:
-            return "Cm8"
-        elif "cirr" in value and "strat" in value:
-            return "Ch8"
-        elif "cirr" in value:
-            return "Ch9"
         elif "strat" in value:
             return "Ch8"
         elif "nimb" in value:
@@ -31,7 +32,14 @@ class iso_mapping:
 
     def convertLowerCloud(cloud: str):
         value = cloud.lower()
-        if "cumul" in value and "nimb" in value:
+        # cirrus-type clouds are high clouds, whichever column they are written in
+        if "cirr" in value and "cumul" in value:
+            return "Ch9"                     # cirrocumulus
+        elif "cirr" in value and "strat" in value:
+            return "Ch8"                     # cirrostratus
+        elif "cirr" in value:
+            return "Ch6"                     # cirrus
+        elif "cumul" in value and "nimb" in value:
             return "Cl9"
         elif "cumul" in value and "strat" in value:
             return "Cl4"
@@ -39,14 +47,14 @@ class iso_mapping:
             return "Cm2"
         elif "nimb" in value:
             return "Cl7"
-        elif "cirr" in value:
-            return "Ch6"
         elif "strat" in value:
             return "Cl6"
         elif "cumul" in value:
             return "Cl2"
-        elif "scud" in value or "passing" in value:
+        elif "scud" in value:
             return "Cl5"
+        elif "passing" in value:
+            return "Cl2"                     # Table 5
         elif ("obscured" in value or "hidden" in value or "fog" in value or "haz" in value or "smoke" in value
               or "mist" in value or "vapour" in value or "overcast" in value):
             return "Cl/"
@@ -59,94 +67,63 @@ class iso_mapping:
         value = wf.lower()
         if "gale" in value:
             if "near" in value:
-                return 15.4
+                return 15
             elif "strong" in value:
-                return 22.6
+                return 25
             else:
-                return 19
+                return 20
         elif "storm" in value:
             if "violent" in value:
-                return 30.9
+                return 35
             else:
-                return 26.8
+                return 30
         elif "hurricane" in value:
-            return 35.
+            return 40
         elif "calm" in value:
             return 0
         elif "air" in value:
             return 1
         elif "light" in value:
-            return 2.6
+            return 2
         elif ("gentle" in value or "modest" in value):
-            return 4.6
+            return 5
         elif "moderate" in value:
-            return 6.7
+            return 7
         elif "fresh" in value:
-            return 9.3
+            return 10
         elif "strong" in value:
-            return 12.3
+            return 12
         else:
             return -999
 
 
+    # Beaufort force -> m/s, consistent with Table 4 of Slonosky et al. (2026), Scientific Data 13:678,
+    # which pairs each Smithsonian force with a Beaufort force and an m/s value:
+    #   Beaufort 1 2 3 5 7 8 9 11 12 = 1 2 5 10 15 20 25 35 40 m/s.
+    # Forces not in Table 4: 0 = 0; 4 = 7 and 6 = 12 (mid-points of the WMO m/s ranges);
+    # 10 = 30 (between the paper's 25 and 35).
+    # Precision: descriptive wind forces are estimates, so the values are given as whole numbers
+    # (to the nearest 5 m/s above 10 m/s, as in Table 4). Above force 3 they are up to 5 m/s higher
+    # than the mid-points of the modern WMO ranges (e.g. force 11: 35 vs 30.5 m/s); force 12 is
+    # open-ended (32.7 m/s and above).
+    BEAUFORT_MS = [0, 1, 2, 5, 7, 10, 12, 15, 20, 25, 30, 35, 40]
+
     def convertBeaufort(wf: str):
         value = int(wf)
-        if value == 0:
-            return 0
-        elif value == 1:
-            return 1
-        elif value == 2:
-            return 2.6
-        elif value == 3:
-            return 4.6
-        elif value == 4:
-            return 6.7
-        elif value == 5:
-            return 9.3
-        elif value == 6:
-            return 12.3
-        elif value == 7:
-            return 15.4
-        elif value == 8:
-            return 19
-        elif value == 9:
-            return 22.6
-        elif value == 10:
-            return 26.8
-        elif value == 11:
-            return 30.9
-        elif value == 12:
-            return 35
-        else:
-            return (-999)
+        if 0 <= value <= 12:
+            return iso_mapping.BEAUFORT_MS[value]
+        return (-999)
 
+
+    # Smithsonian scale -> m/s: "Eqv m/s" of Table 4 in Slonosky et al. (2026), Scientific Data 13:678
+    # (nominal mph 0 2 4 12 25 35 45 60 75 90 100, rounded: descriptive wind forces are not precise).
+    SMITHSONIAN_MS = [0, 1, 2, 5, 10, 15, 20, 25, 35, 40, 45]
 
     def convertSmithsonian(wf: str):
         value = int(wf)
-        if value == 0:
-            return 0
-        elif value == 1:
-            return 1  # 2mph /2.237
-        elif value == 2:
-            return (float(4/2.237))
-        elif value == 3:
-            return (float(12/2.237))
-        elif value == 4:
-            return (float(25/2.237))
-        elif value == 5:
-            return (float(35/2.237))
-        elif value == 6:
-            return (float(45/2.237))
-        elif value == 7:
-            return (float(60/2.237))
-        elif value == 8:
-            return (float(75/2.237))
-        elif value == 9:
-            return (float(90/2.237))
-        elif value == 10:
-            return (float(100/2.237))
-        else:
-            return (-999)
+        if 0 <= value <= 10:
+            return iso_mapping.SMITHSONIAN_MS[value]
+        return (-999)
 
 
     #  map to convert directions to iso - key should be lower case
